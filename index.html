@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Карта Мечт</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      background: black;
+    }
+
+    .scene {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+    }
+
+    .scene.active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .student {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      cursor: pointer;
+      animation: float 8s ease-in-out infinite alternate, bounce 2s ease-in-out infinite, rotate 20s linear infinite;
+      box-shadow: 0 0 15px rgba(255,255,255,0.5);
+      transition: transform 0.4s ease;
+    }
+
+    .student:hover {
+      transform: scale(1.4) rotate(5deg);
+      z-index: 10;
+    }
+
+    .tooltip {
+      position: absolute;
+      padding: 12px 18px;
+      background: rgba(0,0,0,0.85);
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 16px;
+      color: white;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 100;
+    }
+
+    .tooltip.active {
+      opacity: 1;
+      transform: translateY(-25px);
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-20px); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Сцена 1 -->
+<div class="scene active" id="scene1" style="background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1600&q=80');">
+  <div class="student" style="top: 20%; left: 30%;" data-desc="🛰 Хочу стать космическим инженером!"></div>
+  <div class="student" style="top: 45%; left: 60%;" data-desc="🎨 Мечтаю рисовать как Ван Гог."></div>
+  <div class="student" style="top: 70%; left: 40%;" data-desc="💻 Стану айтишником мирового уровня."></div>
+  <div class="student" style="top: 35%; left: 20%;" data-desc="📚 Хочу написать бестселлер."></div>
+</div>
+
+<!-- Сцена 2 -->
+<div class="scene" id="scene2" style="background-image: url('https://images.unsplash.com/photo-1501973801540-537f08ccae7d?auto=format&fit=crop&w=1600&q=80');">
+  <div class="student" style="top: 20%; left: 25%;" data-desc="⚽️ Чтобы я был самым лучшим футболистом"></div>
+  <div class="student" style="top: 50%; left: 50%;" data-desc="👨‍👩‍👦 Чтобы мои родители долго жили"></div>
+  <div class="student" style="top: 50%; left: 50%; transform: translate(-50%, -50%);" data-desc="🪙 Чтобы Руслан ака поставил Нурмухаммаду 100 коинов"></div>
+  <div class="student" style="top: 40%; left: 30%;" data-desc="💖 Чтобы я долго жил и был счастлив"></div>
+</div>
+
+<!-- Сцена 3 -->
+<div class="scene" id="scene3" style="background-image: url('https://images.unsplash.com/photo-1506748686215-0530d6a43625?auto=format&fit=crop&w=1600&q=80');">
+  <div class="student" style="top: 20%; left: 40%;" data-desc="🌍 Чтобы все были добрыми и хорошими"></div>
+  <div class="student" style="top: 45%; left: 60%;" data-desc="💸 Чтобы Руслан ака был щедрым"></div>
+  <div class="student" style="top: 70%; left: 30%;" data-desc="✨ Чтобы все оставались красивыми"></div>
+  <div class="student" style="top: 35%; left: 50%;" data-desc="🩺 Чтобы все не болели"></div>
+</div>
+
+<!-- Сцена 4 -->
+<div class="scene" id="scene4" style="background-image: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1600&q=80');">
+  <div class="student" style="top: 25%; left: 35%;" data-desc="🚀 Хочу стать пилотом!"></div>
+  <div class="student" style="top: 50%; left: 65%;" data-desc="🎹 Мечтаю играть на рояле"></div>
+  <div class="student" style="top: 65%; left: 45%;" data-desc="🏆 Хочу выиграть соревнования"></div>
+  <div class="student" style="top: 30%; left: 55%;" data-desc="📷 Мечтаю стать фотографом природы"></div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  const students = document.querySelectorAll('.student');
+  const tooltip = document.getElementById('tooltip');
+
+  students.forEach(student => {
+    student.addEventListener('mouseenter', () => {
+      tooltip.textContent = student.getAttribute('data-desc');
+      tooltip.classList.add('active');
+    });
+
+    student.addEventListener('mousemove', e => {
+      tooltip.style.left = e.pageX + 'px';
+      tooltip.style.top = e.pageY - 30 + 'px';
+    });
+
+    student.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('active');
+    });
+  });
+
+  // Параллакс
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    document.querySelectorAll('.scene.active').forEach(scene => {
+      scene.style.transform = `translate(${x}px, ${y}px)`;
+    });
+  });
+
+  // Переключение сцен
+  const scenes = ['scene1', 'scene2', 'scene3', 'scene4'];
+  let currentScene = 0;
+
+  setInterval(() => {
+    document.getElementById(scenes[currentScene]).classList.remove('active');
+    currentScene = (currentScene + 1) % scenes.length;
+    document.getElementById(scenes[currentScene]).classList.add('active');
+  }, 10000);
+</script>
+
+</body>
+</html>
+
+
+
